@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>VR House Tour with On-Screen Joystick</title>
+  <title>VR House Tour with Movable Joystick and Raycast</title>
   <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
   <style>
     #joystick {
@@ -15,7 +15,8 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      z-index: 2; /* Ensures joystick stays in front */
+      z-index: 10; /* Negative z-index pushes it behind the model */
+      opacity: 100; /* Initially hidden */
     }
     #joystick button {
       position: absolute;
@@ -47,12 +48,12 @@
     <button id="right"></button>
   </div>
 
-  <a-scene>
+  <a-scene vr-mode-ui="enabled: false">
     <a-entity gltf-model="url(scene.gltf)" position="0 0 0" scale="1 1 1"></a-entity>
 
-    <a-entity id="cameraRig" xr-tracked-input position="0 1.6 0">
+    <a-entity id="cameraRig" xr-tracked-input position="1 1 1">
       <a-entity camera look-controls></a-entity>
-      <a-entity raycaster="origin: 0 0 -0.5; direction: 0 0 -1; objects: .clickable" teleport="cursor: raycaster; teleportMode: continuous"></a-entity>
+      <a-entity id="raycaster" raycaster="origin: 0 0 -0.5; direction: 0 0 -1; objects: .clickable" teleport="cursor: raycaster; teleportMode: continuous"></a-entity>
     </a-entity>
 
     <a-light type="ambient" color="#888"></a-light>
