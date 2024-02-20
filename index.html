@@ -1,7 +1,7 @@
-<!DOCTYPE html>
+]<!DOCTYPE html>
 <html>
 <head>
-  <title>VR Model Viewer with Controller Joystick (Inside Model)</title>
+  <title>VR Controller Movement Test</title>
   <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
   <script src="https://unpkg.com/aframe-oculus-quest-hands"></script>
 </head>
@@ -9,11 +9,13 @@
   <a-scene oculus-touch-controls>
     <a-entity gltf-model="url(scene.gltf)" position="0 0 -5" scale="1 1 1"></a-entity>
 
-    <a-entity id="cameraRig" position="0 1.0 -2">
+    <a-entity id="cameraRig" position="0 1.6 0">
       <a-entity camera look-controls></a-entity>
     </a-entity>
 
-    <a-entity laser-controls="hand: right; color: red"></a-entity>
+    <a-entity id="movementPlane" geometry="primitive: plane; height: 1; width: 1" position="0 0 0" material="opacity: 0.2; color: blue"></a-entity>
+
+    <a-entity geometry="primitive: box; height: 1; width: 1; depth: 1" position="2 0 0" material="color: red"></a-entity>
 
     <a-light type="ambient" color="#888"></a-light>
     <a-light type="directional" color="#fff" intensity="0.8" position="2 4 3"></a-light>
