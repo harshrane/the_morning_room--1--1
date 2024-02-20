@@ -1,5 +1,4 @@
 const cameraRig = document.getElementById('cameraRig');
-const movementPlane = document.getElementById('movementPlane'); // Optional for visualization
 
 let movementSpeed = 0.1; // Adjust movement speed as needed
 
@@ -12,11 +11,6 @@ AFRAME.registerComponent('oculus-joystick-movement', {
       movement.normalize();
 
       cameraRig.object3D.position = cameraRig.object3D.position.add(movement.multiplyScalar(movementSpeed));
-
-      // Optional visualization using movement plane
-      if (movementPlane) {
-        movementPlane.object3D.position.copy(cameraRig.object3D.position);
-      }
     }
   }
 });
