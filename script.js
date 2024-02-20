@@ -9,7 +9,7 @@ AFRAME.registerComponent('oculus-joystick-movement', {
       const joystick = gamepad.getAxes('oculusTouchLeftThumbstick');
       const movement = new THREE.Vector3(joystick[0], 0, joystick[1]);
       movement.normalize();
-
+//fsggs
       cameraRig.object3D.position = cameraRig.object3D.position.add(movement.multiplyScalar(movementSpeed));
     }
   }
