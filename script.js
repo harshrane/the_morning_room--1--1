@@ -16,3 +16,4 @@ AFRAME.registerComponent('oculus-joystick-movement', {
 });
 
 cameraRig.setAttribute('oculus-joystick-movement', {});
+//dkdk
