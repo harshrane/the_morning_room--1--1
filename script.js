@@ -1,47 +1,57 @@
 const joystick = document.getElementById('joystick');
-const buttons = joystick.querySelectorAll('button');
+const joystickTouchArea = document.getElementById('joystickTouchArea');
 const cameraRig = document.getElementById('cameraRig');
-const raycaster = document.getElementById('raycaster');
+const raycaster = document.getElementById('cameraRig').querySelector('a-entity[camera]');
 
-let joystickOffset = { x: 0, y: 0, z: 0.1 }; // Adjust z-offset based on desired joystick position
+let isJoystickActive = false;
+let joystickOffset = { x: 0, y: 0 };
+let isInModel = true; // Flag to track camera position
 
-buttons.forEach(button => {
-  button.addEventListener('click', handleButtonClick);
-});
+joystickTouchArea.addEventListener('mousedown', startJoystick);
+joystickTouchArea.addEventListener('mouseup', stopJoystick);
+joystickTouchArea.addEventListener('touchstart', startJoystick);
+joystickTouchArea.addEventListener('touchend', stopJoystick);
 
-cameraRig.addEventListener('xrelementmoved', updateRaycastOrigin);
+function startJoystick(event) {
+  isJoystickActive = true;
+  joystick.setAttribute('visible', true);
+  const touchX = event.clientX || event.touches[0].clientX;
+  const touchY = event.clientY || event.touches[0].clientY;
+  joystickOffset.x = touchX - joystick.offsetLeft - joystick.clientWidth / 2;
+  joystickOffset.y = touchY - joystick.offsetTop - joystick.clientHeight / 2;
+}
 
-cameraRig.addEventListener('enter-vr', () => {
-  joystick.style.opacity = 1;
-  joystick.style.zIndex = 2; // Remove negative z-index in VR for full visibility
-});
+function stopJoystick() {
+  isJoystickActive = false;
+  joystick.setAttribute('visible', false);
+  joystickOffset.x = 0;
+  joystickOffset.y = 0;
+}
 
-cameraRig.addEventListener('exit-vr', () => {
-  joystick.style.opacity = 0;
-  joystick.style.zIndex = -1; // Restore negative z-index when exiting VR
-});
+AFRAME.registerComponent('joystick-movement', {
+  tick: function () {
+    if (isJoystickActive) {
+      const cameraPosition = cameraRig.object3D.position;
+      const movement = new THREE.Vector3(joystickOffset.x, 0, joystickOffset.y);
+      movement.normalize();
 
-function handleButtonClick(event) {
-  const direction = event.target.id;
-  const speed = 0.2; // Adjust movement speed as needed
+      // Check if camera is inside the model using raycast
+      const intersection = raycaster.components.raycaster.getIntersection();
+      if (intersection && intersection.object.el.id === 'model') {
+        isInModel = true;
+      } else {
+        isInModel = false;
+      }
 
-  switch (direction) {
-    case 'forward':
-      cameraRig.setAttribute('wasd-controls', { acceleration: speed, enabled: true, axes: '0 0 1' });
-      break;
-    case 'backward':
-      cameraRig.setAttribute('wasd-controls', { acceleration: speed, enabled: true, axes: '0 0 -1' });
-      break;
-    case 'left':
-      cameraRig.setAttribute('wasd-controls', { acceleration: speed, enabled: true, axes: '-1 0 0' });
-      break;
-    case 'right':
-      cameraRig.setAttribute('wasd-controls', { acceleration: speed, enabled: true, axes: '1 0 0' });
-      break;
+      if (isInModel) {
+        // Move camera within the model
+        cameraRig.object3D.position = cameraPosition.add(movement.multiplyScalar(0.05)); // Adjust movement speed as needed
+      } else {
+        // Rotate camera around the model
+        cameraRig.object3D.rotation.y += movement.x * 0.01; // Adjust rotation speed as needed
+      }
+    }
   }
-}
+});
 
-function updateRaycastOrigin() {
-  const cameraPosition = cameraRig.object3D.position;
-  raycaster.setAttribute('raycaster', { origin: cameraPosition.clone().add(joystickOffset) });
-}
+cameraRig.setAttribute('joystick-movement', {});
