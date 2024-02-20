@@ -1,65 +1,26 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>VR House Tour with Movable Joystick and Raycast</title>
+  <title>VR Model Viewer with Joystick and Laser</title>
   <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
-  <style>
-    #joystick {
-      position: absolute;
-      bottom: 10px;
-      right: 10px;
-      width: 200px;
-      height: 200px;
-      border-radius: 50%;
-      background: #ccc;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 10; /* Negative z-index pushes it behind the model */
-      opacity: 100; /* Initially hidden */
-    }
-    #joystick button {
-      position: absolute;
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
-      background: #ddd;
-      cursor: pointer;
-    }
-    #forward {
-      top: -50px;
-    }
-    #backward {
-      bottom: -50px;
-    }
-    #left {
-      left: -50px;
-    }
-    #right {
-      right: -50px;
-    }
-  </style>
+  <script src="https://unpkg.com/aframe-oculus-quest-hands"></script>
 </head>
 <body>
-  <div id="joystick">
-    <button id="forward"></button>
-    <button id="backward"></button>
-    <button id="left"></button>
-    <button id="right"></button>
-  </div>
+  <a-scene oculus-touch-controls>
+    <a-entity gltf-model="url(scene.gltf)" position="0 0 -5" scale="1 1 1"></a-entity>
 
-  <a-scene vr-mode-ui="enabled: false">
-    <a-entity gltf-model="url(scene.gltf)" position="0 0 0" scale="1 1 1"></a-entity>
-
-    <a-entity id="cameraRig" xr-tracked-input position="1 1 1">
-      <a-entity camera look-controls></a-entity>
-      <a-entity id="raycaster" raycaster="origin: 0 0 -0.5; direction: 0 0 -1; objects: .clickable" teleport="cursor: raycaster; teleportMode: continuous"></a-entity>
+    <a-entity id="cameraRig" position="0 1.0 -2"> <a-entity camera look-controls></a-entity>
     </a-entity>
+
+    <a-entity id="joystick" position="0.1 -0.1 0" visible="false">
+      <a-image src="path/to/joystick.png" width="0.2" height="0.2"></a-image>
+      <a-entity id="joystickTouchArea" geometry="primitive: plane; height: 0.2; width: 0.2" position="0 0 0.01" visible="false" material="opacity: 0"></a-entity>
+    </a-entity>
+
+    <a-entity laser-controls="hand: right; color: red"></a-entity>
 
     <a-light type="ambient" color="#888"></a-light>
     <a-light type="directional" color="#fff" intensity="0.8" position="2 4 3"></a-light>
   </a-scene>
-
-  <script src="script.js"></script>
 </body>
 </html>
